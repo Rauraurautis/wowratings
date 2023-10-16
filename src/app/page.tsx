@@ -5,23 +5,6 @@ import SearchWithAutocomplete from "./_components/characters/SearchWithAutocompl
 import { readFromFile } from "./_lib/utils/serverFunctions"
 import { setAccessToken } from "./_lib/firebase"
 
-
-const char = {
-  character: 'zechey',
-  realm: 'stormreaver',
-  locale: 'eu',
-  twos: 1048,
-  threes: 1976,
-  rbgs: 2013,
-  shuffle: 2288,
-  shuffleRank: 157,
-  charClass: 'druid',
-  charSpec: 'feral',
-  time: 1697291678971
-}
-
-export let token = ""
-
 export default async function Home() {
   const characterData = readFromFile()
   const settingNewToken = await setAccessToken()
