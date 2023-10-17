@@ -22,6 +22,7 @@ export type CharInfoProps = {
 
 const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allCharacters }): React.ReactNode => {
     const [charInfo, setCharInfo] = useState<CharInfoProps>({ nameRealmCombo: "", locale: "eu" })
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [keyboard, setKeyboard] = useState(false)
     const { setCharacter } = useCharacterStore()
@@ -40,7 +41,7 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
                 const [name, realm] = charInfo.nameRealmCombo.split("-")
                 const character = await addOrUpdateCharacter(name.toLowerCase(), realm.toLowerCase(), charInfo.locale)
                 if (character) {
-                    setCharacter(character)
+                    router.push(`/${character.locale}/${character.realm}/${character.character}`)
                 }
                 setLoading(false)
 
