@@ -1,11 +1,12 @@
 "use client"
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { FullCharacterData } from '../../_lib/types'
 import useCharacterStore from '../../_lib/store/characterStore'
 import capitalizeString from '../../_lib/utils/capitalizeString'
 import classColors, { ClassColors } from '../../_lib/utils/classColors'
 import { formatDistance } from 'date-fns'
 import { addOrUpdateCharacter } from '../../_lib/utils/arenaDataFunctions'
+import Spinner from '../random/Spinner'
 
 const boxThemes = {
     container: "min-w-[50px] min-h-[50px] md:min-w-[80px] md:min-h-[80px] bg-indigo-500 flex flex-col justify-around items-center",
@@ -13,18 +14,17 @@ const boxThemes = {
     rating: "text-xl font-semibold text-indigo-200"
 }
 
-const CharacterInfo: FC = ({ }) => {
-    const { selectedCharacter, setCharacter } = useCharacterStore()
+const CharacterInfo: FC<{ character?: FullCharacterData | undefined }> = ({ character }) => {
+    const [refreshing, setRefreshing] = useState(false)
     const currentTime = new Date().getTime()
 
-    if (selectedCharacter) {
-        const { twos, threes, rbgs, shuffle, shuffleRank, character: name, realm, charClass, time, image, locale, highestRatings } = selectedCharacter
-        
+    if (character) {
+        const { twos, threes, rbgs, shuffle, shuffleRank, character: name, realm, charClass, time, image, locale, highestRatings } = character
+
         const handleRefreshClick = async () => {
+            setRefreshing(true)
             const character = await addOrUpdateCharacter(name, realm, locale)
-            if (character) {
-                setCharacter(character)
-            }
+            setRefreshing(false)
         }
 
         return <div className="  w-full flex flex-col justify-between items-center  break-keep xl:w-auto animate-fadeIn ">
@@ -36,16 +36,17 @@ const CharacterInfo: FC = ({ }) => {
                         </span>-{capitalizeString(realm)}
                     </h2>
                 </div>
-                <div className="max-w-[300px]">
+                <div className="h-[100px]">
                     <a href={`https://worldofwarcraft.blizzard.com/en-gb/character/${locale}/${realm}/${name}`} target='_blank'>
                         <img src={image} alt="No image" className="w-full h-full hover:brightness-125" />
                     </a>
                 </div>
                 <div className="flex gap-2 items-center  w-full justify-around">
                     <h2 className="text-white text-xl">Updated {formatDistance(currentTime, time || 0, { includeSeconds: true })} ago</h2>
-                    <p className="cursor-pointer" onClick={handleRefreshClick}>🔃</p>
+                    <p className={`${refreshing ? "cursor-default" : "cursor-pointer"}  w-[22px] relative`} onClick={refreshing ? () => { } : handleRefreshClick}>{refreshing ? <Spinner size={4} /> : "🔃"}</p>
                 </div>
-                {shuffleRank !== 999999 ? <h2 className="text-white text-xl">Shuffle rank: {shuffleRank}</h2> : ""}
+                <h2 className="text-white text-xl">{shuffleRank !== 999999 ? `Shuffle rank: ${shuffleRank}` : "Shuffle rank too high"}</h2>
+
             </div>
             <div className="flex gap-5 pt-5">
                 <div className={boxThemes.container}>

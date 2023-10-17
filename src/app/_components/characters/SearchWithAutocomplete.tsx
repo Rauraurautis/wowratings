@@ -58,7 +58,7 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
     return <div className={`gap-1 p-2 min-w-[200px] relative h-full  flex flex-col justify-start ${loading ? "items-center" : "items-start"}`}>
 
         {loading ?
-            <Spinner /> :
+            <Spinner size={8} /> :
             <>
 
                 <form onSubmit={handleSubmit} className="flex gap-1 w-full h-[35px]">

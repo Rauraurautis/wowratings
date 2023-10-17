@@ -7,12 +7,14 @@ import classColors, { ClassColors } from '../../_lib/utils/classColors'
 import useCharacterStore from '../../_lib/store/characterStore'
 import { readFromFile } from '../../_lib/utils/serverFunctions'
 import { FullCharacterData } from '../../_lib/types'
+import { useRouter } from 'next/navigation'
 
 interface CharacterListProps {
     characterData: FullCharacterData[]
 }
 
 const CharacterList: FC<CharacterListProps> = ({ characterData }) => {
+    const router = useRouter()
 
 
 
@@ -32,7 +34,7 @@ const CharacterList: FC<CharacterListProps> = ({ characterData }) => {
             <tbody className="p-1">
                 {characterData ?
                     characterData.slice(0, 10).map((char, i) => (
-                        <tr key={i} className="text-white border bg-blue-500 bg-opacity-20 rounded-md text-lg font-normal font-sans cursor-pointer" onClick={() => setCharacter(char)}>
+                        <tr key={i} className="text-white border bg-blue-500 bg-opacity-20 rounded-md text-lg font-normal font-sans cursor-pointer" onClick={() => router.push(`/${char.locale}/${char.realm}/${char.character}`)}>
                             <td className="p-1 md:p-2 text-start text-sm md:text-base"><span style={{ color: classColors[char.charClass as keyof ClassColors] }}>{capitalizeString(char.character)}</span>-{capitalizeString(char.realm)}</td>
                             <td className="p-1 md:p-2 text-start ">{capitalizeString(getHighestRating(char))}</td>
                             <td className="p-1 md:p-2 text-end">{formatDistance(currentTime, char.time || 0, { includeSeconds: true })} ago</td>
