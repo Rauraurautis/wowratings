@@ -2,7 +2,8 @@
 
 import axiosInstance from "../axiosInstance"
 import { getAccessToken } from "../firebase"
-import { FullCharacterData } from "../types"
+import { FullCharacterData, HighestRatings } from "../types"
+import { derivePvpAchievements } from "./arenaDataHelpers"
 import { addCharacter } from "./serverFunctions"
 
 
@@ -16,6 +17,11 @@ const specRanking = async (classSpec: string, character: string, token: string):
 const bracketApiAddress = (character: string, realm: string, locale: string, token: string, category: string) => (`https://${locale}.api.blizzard.com/profile/wow/character/${realm}/${character.toLowerCase()}/pvp-bracket/${category}?namespace=profile-${locale}&locale=en_GB&access_token=${token}`)
 
 const characterImageApiAddress = (character: string, realm: string, token: string, locale: string) => (`https://${locale}.api.blizzard.com/profile/wow/character/${realm}/${character.toLowerCase()}/character-media?namespace=profile-${locale}&locale=en_GB&access_token=${token}`)
+
+const characterStatsApiAddress = (character: string, realm: string, token: string, locale: string) => (`https://${locale}.api.blizzard.com/profile/wow/character/${realm}/${character.toLowerCase()}/achievements/statistics?namespace=profile-${locale}&locale=en_GB&access_token=${token}`)
+
+const characterAchievementsApiAddress = (character: string, realm: string, token: string, locale: string) => (`https://${locale}.api.blizzard.com/profile/wow/character/${realm}/${character.toLowerCase()}/achievements?namespace=profile-${locale}&locale=en_GB&access_token=${token}`)
+
 
 const getRatingFromAPI = async (character: string, realm: string, locale: string, token: string, category: string): Promise<number> => {
     try {
@@ -35,13 +41,35 @@ const getImageFromAPI = async (character: string, realm: string, locale: string,
     }
 }
 
+const getArenaExperienceFromAPI = async (character: string, realm: string, locale: string, token: string): Promise<HighestRatings> => {
+    try {
+        const highestArena = await axiosInstance.get(characterStatsApiAddress(character, realm, token, locale))
+        const achievements = await axiosInstance.get(characterAchievementsApiAddress(character, realm, token, locale))
+
+        const pvpStats = highestArena.data.categories[8].sub_categories[0].statistics
+
+        const [threes, twos] = pvpStats.filter((statistics: any) => statistics.id === 595 || statistics.id === 370)
+        const highestRbg = derivePvpAchievements(achievements.data.achievements)
+        return { highestThrees: threes.quantity, highestTwos: twos.quantity, highestRbg: highestRbg.highestRbg }
+    } catch (error) {
+        console.error(error)
+        return { highestThrees: 0, highestTwos: 0, highestRbg: 0 }
+    }
+}
+
+
+
+
+
+
 const getArenaData = async (character: string, realm: string, locale: string): Promise<FullCharacterData | null> => {
     try {
         const token = await getAccessToken()
         realm = realm.replaceAll(" ", "-")
         const charInfo = await axiosInstance.get(`https://${locale}.api.blizzard.com/profile/wow/character/${realm}/${character}?namespace=profile-${locale}&locale=en_US&access_token=${token}`)
-        const charClass = charInfo.data.character_class.name.toLowerCase()
-        const charSpec = charInfo.data.active_spec.name.toLowerCase()
+        const { id, character_class, active_spec } = charInfo.data
+        const charClass = character_class.name.toLowerCase()
+        const charSpec = active_spec.name.toLowerCase()
         const classSpec = `${charClass}-${charSpec}`
         const shuffle = await getRatingFromAPI(character, realm, locale, token, `shuffle-${classSpec}`)
         const twos = await getRatingFromAPI(character, realm, locale, token, `2v2`)
@@ -49,7 +77,8 @@ const getArenaData = async (character: string, realm: string, locale: string): P
         const rbgs = await getRatingFromAPI(character, realm, locale, token, `rbg`)
         const shuffleRank = await specRanking(classSpec, character, token)
         const image = await getImageFromAPI(character, realm, locale, token)
-        return { character, realm, locale, twos, threes, rbgs, shuffle, shuffleRank, charClass, charSpec, time: null, image }
+        const highestRatings = await getArenaExperienceFromAPI(character, realm, locale, token)
+        return { id, character, realm, locale, twos, threes, rbgs, shuffle, shuffleRank, charClass, charSpec, time: null, image, highestRatings }
     } catch (error) {
         console.error(error)
         return null
@@ -57,12 +86,17 @@ const getArenaData = async (character: string, realm: string, locale: string): P
 }
 
 const addOrUpdateCharacter = async (name: string, realm: string, locale: string) => {
-    const playerArenaData = await getArenaData(name.toLowerCase(), realm.toLowerCase(), locale)
-    if (!playerArenaData) throw Error("No player arena data")
-    const character = await addCharacter(playerArenaData)
-    if (character) {
-        return character
+    try {
+        const playerArenaData = await getArenaData(name.toLowerCase(), realm.toLowerCase(), locale)
+        if (!playerArenaData) throw Error("No player arena data")
+        const character = await addCharacter(playerArenaData)
+        if (character) {
+            return character
+        }
+    } catch (error) {
+        console.error(error)
     }
+
 }
 
 

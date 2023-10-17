@@ -6,7 +6,14 @@ export type ArenaData = {
     shuffleRank: number | null
 }
 
+export type HighestRatings = {
+    highestThrees: number
+    highestTwos: number
+    highestRbg: number
+}
+
 export type FullCharacterData = {
+    id: number
     character: string
     realm: string
     locale: string
@@ -14,4 +21,6 @@ export type FullCharacterData = {
     charClass: string
     time: number | null
     image: string
+    highestRatings: HighestRatings
 } & ArenaData
+

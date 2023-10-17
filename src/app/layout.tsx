@@ -1,7 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export const metadata: Metadata = {

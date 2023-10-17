@@ -18,8 +18,8 @@ const CharacterInfo: FC = ({ }) => {
     const currentTime = new Date().getTime()
 
     if (selectedCharacter) {
-        const { twos, threes, rbgs, shuffle, shuffleRank, character: name, realm, charClass, time, image, locale } = selectedCharacter
-      
+        const { twos, threes, rbgs, shuffle, shuffleRank, character: name, realm, charClass, time, image, locale, highestRatings } = selectedCharacter
+        
         const handleRefreshClick = async () => {
             const character = await addOrUpdateCharacter(name, realm, locale)
             if (character) {
@@ -27,7 +27,7 @@ const CharacterInfo: FC = ({ }) => {
             }
         }
 
-        return <div className=" min-h-[400px] w-full flex flex-col justify-between items-center p-1 break-keep xl:w-auto ">
+        return <div className="  w-full flex flex-col justify-between items-center  break-keep xl:w-auto animate-fadeIn ">
             <div className="flex flex-col items-center gap-4">
                 <div className="border-b-[1px] p-2 w-[90%] text-center border-gray-500 relative xl:w-full">
                     <h2 className="text-white text-2xl">
@@ -36,31 +36,61 @@ const CharacterInfo: FC = ({ }) => {
                         </span>-{capitalizeString(realm)}
                     </h2>
                 </div>
-                <div className="w-[90%]">
-                    <img src={image} alt="No image" className="w-full h-full" />
+                <div className="max-w-[300px]">
+                    <a href={`https://worldofwarcraft.blizzard.com/en-gb/character/${locale}/${realm}/${name}`} target='_blank'>
+                        <img src={image} alt="No image" className="w-full h-full hover:brightness-125" />
+                    </a>
                 </div>
                 <div className="flex gap-2 items-center  w-full justify-around">
-                    <h2 className="text-white text-xl">{formatDistance(currentTime, time || 0, { includeSeconds: true })} ago</h2>
+                    <h2 className="text-white text-xl">Updated {formatDistance(currentTime, time || 0, { includeSeconds: true })} ago</h2>
                     <p className="cursor-pointer" onClick={handleRefreshClick}>🔃</p>
                 </div>
-                {shuffleRank !== 999999 ? <h2 className="text-white text-xl">Shuffle rank {shuffleRank}</h2> : ""}
+                {shuffleRank !== 999999 ? <h2 className="text-white text-xl">Shuffle rank: {shuffleRank}</h2> : ""}
             </div>
-            <div className="flex gap-5">
+            <div className="flex gap-5 pt-5">
                 <div className={boxThemes.container}>
                     <h1 className={boxThemes.bracket}>2v2</h1>
-                    <h1 className={boxThemes.rating}>{twos}</h1>
+                    <div className="text-xs text-center ">
+                        <p>Current</p>
+                        <h1 className={boxThemes.rating}>{twos}</h1>
+                    </div>
+                    <div className="text-xs text-center ">
+                        <p className="">Record</p>
+                        <h1 className={boxThemes.rating}>{highestRatings.highestTwos}</h1>
+                    </div>
                 </div>
                 <div className={boxThemes.container}>
                     <h1 className={boxThemes.bracket}>3v3</h1>
-                    <h1 className={boxThemes.rating}>{threes}</h1>
+                    <div className="text-xs text-center">
+                        <p>Current</p>
+                        <h1 className={boxThemes.rating}>{threes}</h1>
+                    </div>
+                    <div className="text-xs text-center ">
+                        <p className="">Record</p>
+                        <h1 className={boxThemes.rating}>{highestRatings.highestThrees}</h1>
+                    </div>
                 </div>
                 <div className={boxThemes.container}>
                     <h1 className={boxThemes.bracket}>RBG</h1>
-                    <h1 className={boxThemes.rating}>{rbgs}</h1>
+                    <div className="text-xs text-center">
+                        <p>Current</p>
+                        <h1 className={boxThemes.rating}>{rbgs}</h1>
+                    </div>
+                    <div className="text-xs text-center ">
+                        <p className="">Record</p>
+                        <h1 className={boxThemes.rating}>{highestRatings.highestRbg}</h1>
+                    </div>
                 </div>
                 <div className={boxThemes.container}>
                     <h1 className={boxThemes.bracket}>Shuffle</h1>
-                    <h1 className={boxThemes.rating}>{shuffle}</h1>
+                    <div className="text-xs text-center">
+                        <p>Current</p>
+                        <h1 className={boxThemes.rating}>{threes}</h1>
+                    </div>
+                    <div className="text-xs text-center ">
+                        <p className="">Record</p>
+                        <h1 className={boxThemes.rating}>{highestRatings.highestThrees}</h1>
+                    </div>
                 </div>
             </div>
         </div>

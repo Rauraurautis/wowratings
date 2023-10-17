@@ -13,6 +13,20 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" }
+        },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-6deg)' },
+          '50%': { transform: 'rotate(6deg)' },
+        }
+      },
+      animation: {
+        fadeIn: "fadeIn 0.1s",
+        wiggle: 'wiggle 0.5s ease-in-out infinite',
+      },
     },
   },
   plugins: [],
