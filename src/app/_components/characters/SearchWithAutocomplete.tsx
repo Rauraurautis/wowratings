@@ -26,7 +26,7 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
     const [loading, setLoading] = useState(false)
     const [keyboard, setKeyboard] = useState(false)
     const { setCharacter } = useCharacterStore()
-
+    console.log(charInfo)
 
     const suggestions = charInfo.nameRealmCombo !== "" ? allCharacters.filter(suggestion =>
         suggestion.character.substring(0, charInfo.nameRealmCombo.length).toLowerCase().match(charInfo.nameRealmCombo.toLowerCase()) && suggestion.locale === charInfo.locale) : []
@@ -57,10 +57,10 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
 
     }
 
-    return <div className={`gap-1 p-2 min-w-[200px] relative h-full  flex flex-col justify-start ${loading ? "items-center" : "items-start"}`}>
+    return <div className={`gap-1 p-2 min-w-[300px] relative h-full  flex flex-col justify-start ${loading ? "items-center" : "items-start"} `}>
 
         {loading ?
-            <Spinner size={10} /> :
+            <div className="w-[50px]"><Spinner size={10} /></div> :
             <>
 
                 <form onSubmit={handleSubmit} className="flex gap-1 w-full h-[35px]">
