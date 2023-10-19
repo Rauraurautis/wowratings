@@ -1,5 +1,5 @@
 "use client"
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { FullCharacterData } from '../../_lib/types'
 import useCharacterStore from '../../_lib/store/characterStore'
 import capitalizeString from '../../_lib/utils/capitalizeString'
@@ -16,7 +16,8 @@ const boxThemes = {
 
 const CharacterInfo: FC<{ character?: FullCharacterData | undefined }> = ({ character }) => {
     const [refreshing, setRefreshing] = useState(false)
-    const currentTime = new Date().getTime()
+    const [currentTime, setCurrentTime] = useState(new Date().getTime())
+    
 
     if (character) {
         const { twos, threes, rbgs, shuffle, shuffleRank, character: name, realm, charClass, time, image, locale, highestRatings } = character
