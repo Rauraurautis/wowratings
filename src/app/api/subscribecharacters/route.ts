@@ -4,27 +4,6 @@ import { NextResponse } from 'next/server'
 import { EventNotifier, getSSEWriter } from 'ts-sse'
 import { z } from 'zod'
 
-export const rickAstleySchema = z.string()
-export const dynamic = 'force-dynamic'
-
-
-type SyncEvents = EventNotifier<{
-    update: {
-        data: z.infer<typeof rickAstleySchema>,
-        event: 'update'
-    }
-    complete: {
-        data: z.infer<typeof rickAstleySchema>
-        event: 'update'
-    }
-    close: {
-        data: never
-    }
-    error: {
-        data: never
-    }
-}>
-
 export async function GET() {
     const responseStream = new TransformStream()
     const writer = responseStream.writable.getWriter()
