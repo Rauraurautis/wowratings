@@ -45,7 +45,7 @@ const CharacterInfo: FC<{ character?: FullCharacterData | undefined }> = ({ char
                 </div>
                 <div className="flex gap-2 items-center  w-full justify-around">
                     <h2 className="text-white text-xl">Updated {formatDistance(currentTime, time || 0, { includeSeconds: true })} ago</h2>
-                    <p className={`${refreshing ? "cursor-default" : "cursor-pointer"}  w-[22px] relative`} onClick={refreshing ? () => { } : handleRefreshClick}>{refreshing ? <Spinner size={4} /> : "🔃"}</p>
+                    <p className={`${refreshing ? "cursor-default" : "cursor-pointer"}  w-[22px] relative`} onClick={refreshing ? () => { } : handleRefreshClick}>{refreshing ? <span><Spinner size={4} /></span> : "🔃"}</p>
                 </div>
                 <h2 className="text-white text-xl">{shuffleRank !== 999999 ? `Shuffle rank: ${shuffleRank}` : "Shuffle rank too high"}</h2>
 

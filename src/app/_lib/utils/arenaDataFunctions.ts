@@ -45,10 +45,19 @@ const getArenaExperienceFromAPI = async (character: string, realm: string, local
     try {
         const highestArena = await axiosInstance.get(characterStatsApiAddress(character, realm, token, locale))
         const achievements = await axiosInstance.get(characterAchievementsApiAddress(character, realm, token, locale))
+       
+        let category = null
 
-        const pvpStats = highestArena.data.categories[8].sub_categories[0].statistics
+        // Finds the pvp category of arenas in statistics (does not exist on all characters, stays null and returns undefined if it doesn't)
+        for (const cat of highestArena.data.categories) {
+            if (cat.id === 21) {
+                category = cat
+                break
+            }
+        }  
+        const pvpStats = category.sub_categories[0].id === 152 ? category.sub_categories[0].statistics : undefined   
 
-        const [threes, twos] = pvpStats.filter((statistics: any) => statistics.id === 595 || statistics.id === 370)
+        const [threes, twos] = pvpStats ? pvpStats.filter((statistics: any) => statistics.id === 595 || statistics.id === 370) : [0, 0]
         const highestRbg = derivePvpAchievements(achievements.data.achievements)
         return { highestThrees: threes.quantity, highestTwos: twos.quantity, highestRbg: highestRbg.highestRbg }
     } catch (error) {
@@ -92,7 +101,6 @@ const addOrUpdateCharacter = async (name: string, realm: string, locale: string)
     if (character) {
         return character
     }
-
 }
 
 

@@ -10,6 +10,8 @@ import Spinner from '../random/Spinner'
 import { characterSearchSchema } from '@/app/_lib/zod/schemas'
 import { toast } from 'react-toastify'
 import SpecialCharacters from '../random/SpecialCharacters'
+import { useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
 
 interface SearchWithAutocompleteProps {
     allCharacters: FullCharacterData[]
@@ -20,12 +22,14 @@ export type CharInfoProps = {
     nameRealmCombo: string
 }
 
+
+
 const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allCharacters }): React.ReactNode => {
+    const queryClient = useQueryClient()
     const [charInfo, setCharInfo] = useState<CharInfoProps>({ nameRealmCombo: "", locale: "eu" })
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [keyboard, setKeyboard] = useState(false)
-    const { setCharacter } = useCharacterStore()
 
 
     const suggestions = charInfo.nameRealmCombo !== "" ? allCharacters.filter(suggestion =>
@@ -34,7 +38,6 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const validation = characterSearchSchema.safeParse(charInfo)
-        console.log(validation)
         if (!validation.success) {
             console.log(validation.error.issues)
         }
@@ -42,9 +45,9 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
             try {
                 setLoading(true)
                 const [name, realm] = charInfo.nameRealmCombo.split("-")
-                const character = await addOrUpdateCharacter(name.toLowerCase(), realm.toLowerCase(), charInfo.locale)
+                const character = await axios.post("/api/characters", { name: name.toLowerCase(), realm: realm.toLowerCase(), locale: charInfo.locale })
                 if (character) {
-                    router.push(`/${character.locale}/${character.realm}/${character.character}`)
+                    router.push(`/${character.data.locale}/${character.data.realm}/${character.data.character}`)
                 }
                 setLoading(false)
 
