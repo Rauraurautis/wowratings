@@ -32,7 +32,7 @@ const CharacterInfo: FC<{ character?: FullCharacterData | undefined }> = ({ char
         return <div className="  w-full flex flex-col justify-between items-center  break-keep xl:w-auto animate-fadeIn ">
             <div className="flex flex-col items-center gap-4">
                 <div className="border-b-[1px] p-2 w-[90%] text-center border-gray-500 relative xl:w-full">
-                    <h2 className="text-white text-2xl">
+                    <h2 className="text-white text-2xl whitespace-nowrap">
                         <span style={{ color: classColors[charClass as keyof ClassColors] }}>
                             {capitalizeString(name)}
                         </span>-{capitalizeString(realm)}

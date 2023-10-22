@@ -22,12 +22,22 @@ const CharacterList: FC<CharacterListProps> = ({ characterData }) => {
     const [characters, setCharacters] = useState(characterData)
     const router = useRouter()
 
+    const { data, isError, refetch } = useQuery<FullCharacterData[]>({
+        queryKey: ["charData"], queryFn: async () => {
+            const res = await axios.get("/api/characters")
+            if (res.data) {
+                setCharacters(prev => res.data)
+            }
+            return res.data
+        }
+    })
 
     useEffect(() => {
         const eventSource = new EventSource("/api/subscribecharacters")
 
         eventSource.addEventListener('update', (e) => {
-            setCharacters(prev => JSON.parse(e.data))
+            console.log("Do refetch now!")
+            refetch()
         }
         )
 

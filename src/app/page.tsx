@@ -1,5 +1,3 @@
-import CharacterList from "./_components/characters/CharacterList"
-import CharacterInfo from "./_components/characters/CharacterInfo"
 
 import SearchWithAutocomplete from "./_components/characters/SearchWithAutocomplete"
 import { readFromFile } from "./_lib/utils/serverFunctions"
@@ -8,7 +6,6 @@ import { ToastContainer } from "react-toastify"
 
 export default async function Home() {
     const characterData = readFromFile()
-    const settingNewToken = await setAccessToken()
 
     return (
         <>

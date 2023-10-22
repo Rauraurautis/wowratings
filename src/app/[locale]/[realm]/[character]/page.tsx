@@ -19,7 +19,7 @@ export default async function Home({ params }: { params: { locale: string, realm
             </div>
             <ToastContainer position="top-left" />
             <div className="flex flex-col items-center justify-center xl:flex-row xl:items-start xl:justify-between w-[100%] xl:w-[60%] h-[100%] ">
-                <SearchWithAutocomplete allCharacters={characterData} />
+                {characterData && <SearchWithAutocomplete allCharacters={characterData} /> }
                 <CharacterInfo character={character} />
             </div>
         </>
