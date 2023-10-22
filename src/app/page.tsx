@@ -11,17 +11,18 @@ export default async function Home() {
   const settingNewToken = await setAccessToken()
 
   return (
-    <>
-      <div className="absolute right-0 top-0 p-3 w-[60px] hover:animate-wiggle hidden sm:flex">
-        <a href={"https://github.com/Rauraurautis"} target="_blank">
-          <img src="/github.png" alt="Github" />
-        </a>
-      </div>
-      <ToastContainer position="top-left" />
-      <div className="flex flex-col items-center justify-center xl:flex-row xl:items-start xl:justify-between w-[100%] xl:w-[60%] h-[100%] ">
-        <SearchWithAutocomplete allCharacters={characterData} />
-        <CharacterInfo />
-      </div>
-    </>
+    <main className="flex flex-col items-center h-full py-5 justify-between w-screen xl:w-[75%]">
+            <div className="absolute right-0 top-0 p-3 w-[60px] hover:animate-wiggle hidden sm:flex ">
+                <a href={"https://github.com/Rauraurautis"} target="_blank">
+                    <img src="/github.png" alt="Github" />
+                </a>
+            </div>
+            <ToastContainer position="top-left" />
+            <div className="flex flex-col items-center justify-center xl:flex-row xl:items-start xl:justify-between w-[100%] xl:w-[60%] h-[100%] ">
+                <SearchWithAutocomplete allCharacters={characterData} />
+               
+            </div>
+            <CharacterList characterData={characterData} />
+        </main>
   )
 }

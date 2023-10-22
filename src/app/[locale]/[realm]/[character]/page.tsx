@@ -11,7 +11,8 @@ export default async function Home({ params }: { params: { locale: string, realm
     const character = getCharacterFromFile(params.locale, params.realm, params.character)
 
     return (
-        <>
+
+        <main className="flex flex-col items-center h-full py-5 justify-between w-screen xl:w-[75%]">
             <div className="absolute right-0 top-0 p-3 w-[60px] hover:animate-wiggle hidden sm:flex ">
                 <a href={"https://github.com/Rauraurautis"} target="_blank">
                     <img src="/github.png" alt="Github" />
@@ -22,6 +23,8 @@ export default async function Home({ params }: { params: { locale: string, realm
                 <SearchWithAutocomplete allCharacters={characterData} />
                 <CharacterInfo character={character} />
             </div>
-        </>
+            <CharacterList characterData={characterData} />
+        </main>
+
     )
 }

@@ -22,10 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className=" w-screen h-screen items-center flex justify-center overflow-x-hidden">
-        <main className="flex flex-col items-center h-full py-5 justify-between w-screen xl:w-[75%]">
+       
           {children}
-          <CharacterList characterData={characterData} />
-        </main>
+         
       </body>
     </html>
   )
