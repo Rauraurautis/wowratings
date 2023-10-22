@@ -46,7 +46,6 @@ const readFromFile = (): FullCharacterData[] => {
 
 const getCharacterFromFile = (locale: string, realm: string, character: string): FullCharacterData | undefined => {
     const characters = readFromFile()
-    
     const foundCharacter = characters.find(char => char.locale === locale && char.realm === realm && char.character === decodeURI(character))
     return foundCharacter
 }

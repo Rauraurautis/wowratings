@@ -86,15 +86,11 @@ const getArenaData = async (character: string, realm: string, locale: string): P
 }
 
 const addOrUpdateCharacter = async (name: string, realm: string, locale: string) => {
-    try {
-        const playerArenaData = await getArenaData(name.toLowerCase(), realm.toLowerCase(), locale)
-        if (!playerArenaData) throw Error("No player arena data")
-        const character = await addCharacter(playerArenaData)
-        if (character) {
-            return character
-        }
-    } catch (error) {
-        console.error(error)
+    const playerArenaData = await getArenaData(name.toLowerCase(), realm.toLowerCase(), locale)
+    if (!playerArenaData) throw Error("No player arena data")
+    const character = await addCharacter(playerArenaData)
+    if (character) {
+        return character
     }
 
 }

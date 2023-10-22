@@ -24,6 +24,7 @@ const CharacterInfo: FC<{ character?: FullCharacterData | undefined }> = ({ char
 
         const handleRefreshClick = async () => {
             setRefreshing(true)
+            setCurrentTime(new Date().getTime())
             const character = await addOrUpdateCharacter(name, realm, locale)
             setRefreshing(false)
         }
@@ -87,11 +88,11 @@ const CharacterInfo: FC<{ character?: FullCharacterData | undefined }> = ({ char
                     <h1 className={boxThemes.bracket}>Shuffle</h1>
                     <div className="text-xs text-center">
                         <p>Current</p>
-                        <h1 className={boxThemes.rating}>{threes}</h1>
+                        <h1 className={boxThemes.rating}>{shuffle}</h1>
                     </div>
                     <div className="text-xs text-center ">
                         <p className="">Record</p>
-                        <h1 className={boxThemes.rating}>{highestRatings.highestThrees}</h1>
+                        <h1 className={boxThemes.rating}>{shuffle}</h1>
                     </div>
                 </div>
             </div>

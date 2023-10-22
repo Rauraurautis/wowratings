@@ -36,8 +36,8 @@ const CharacterList: FC<CharacterListProps> = ({ characterData }) => {
                     characterData.slice(0, 10).map((char, i) => (
                         <tr key={i} className="text-white border bg-blue-500 bg-opacity-20 rounded-md text-lg font-normal font-sans cursor-pointer" onClick={() => router.push(`/${char.locale}/${char.realm}/${char.character}`)}>
                             <td className="p-1 md:p-2 text-start text-sm md:text-base"><span style={{ color: classColors[char.charClass as keyof ClassColors] }}>{capitalizeString(char.character)}</span>-{capitalizeString(char.realm)}</td>
-                            <td className="p-1 md:p-2 text-start ">{capitalizeString(getHighestRating(char))}</td>
-                            <td className="p-1 md:p-2 text-end">{formatDistance(currentTime, char.time || 0, { includeSeconds: true })} ago</td>
+                            <td className="p-1 md:p-2 text-start text-sm md:text-base">{capitalizeString(getHighestRating(char))}</td>
+                            <td className="p-1 md:p-2 text-end text-sm md:text-base md:w-[250px] ">{formatDistance(currentTime, char.time || 0, { includeSeconds: true })} ago</td>
                         </tr>
                     )) : <h1>No data</h1>}
             </tbody>
