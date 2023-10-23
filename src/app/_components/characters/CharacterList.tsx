@@ -36,7 +36,6 @@ const CharacterList: FC<CharacterListProps> = ({ characterData }) => {
         const eventSource = new EventSource("/api/subscribecharacters")
 
         eventSource.addEventListener('message', (e) => {
-            console.log("Do refetch now!")
             refetch()
         }
         )

@@ -66,6 +66,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
             const characterCheck = readFromFile()
             if (characterCheck.length > characters.length) {
                 writer.write(`data: SIGNAL\n\n`)
+                characters = characterCheck
             }
         }, 1000)
 
