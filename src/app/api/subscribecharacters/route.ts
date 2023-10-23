@@ -1,4 +1,5 @@
 import { readFromFile } from '@/app/_lib/utils/serverFunctions'
+import EventEmitter from 'events'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { EventNotifier, getSSEWriter } from 'ts-sse'
@@ -6,9 +7,7 @@ import { z } from 'zod'
 
 const characterArraySchema = z.string()
 
-export const runtime = 'nodejs';
-// This is required to enable streaming
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
 type SyncEvents = EventNotifier<{
     update: {
@@ -27,43 +26,70 @@ type SyncEvents = EventNotifier<{
     }
 }>
 
+const stream = new EventEmitter()
 
-
-export async function GET(req: NextRequest, res: Response) {
+export async function GET(req: NextRequest, res: NextResponse) {
     try {
 
 
         const responseStream = new TransformStream()
         const writer = responseStream.writable.getWriter()
         const encoder = new TextEncoder()
-     
+        /*const syncStatusStream = async (notifier: SyncEvents) => {
             let characters = readFromFile()
-            const interval = setInterval(() => {
-                const realtimeCharacters = readFromFile()
-                if (realtimeCharacters.length > characters.length) {
-                    writer.write("SIGNAL")
+            setInterval(() => {
+                const characterCheck = readFromFile()
+                if (characterCheck.length > characters.length) {
+                    notifier.update(
+                        {
+                            data: "REFETCH!",
+                            event: 'update'
+                        }
+                    )
+                    characters = characterCheck
                 }
             }, 1000
             )
-        
-            req.signal.addEventListener("abort", () => {
-                writer.close()
-                console.log("Closing connection")
-                clearInterval(interval)
+        }
 
-            })
+         await syncStatusStream(getSSEWriter(writer, encoder)) */
 
 
+
+        stream.on("channel", () => {
+            writer.write(`data: SIGNAL\n\n`)
+        })
+
+        let characters = readFromFile()
+
+        const interval = setInterval(() => {
+            const characterCheck = readFromFile()
+            if (characterCheck.length > characters.length) {
+                writer.write(`data: SIGNAL\n\n`)
+            }
+        }, 1000)
+
+        req.signal.addEventListener("abort", async () => {
+            clearInterval(interval)
+            await writer.close()
+
+        })
 
         return new NextResponse(responseStream.readable, {
             headers: {
                 'Content-Type': 'text/event-stream',
                 Connection: 'keep-alive',
                 'Cache-Control': 'no-cache, no-transform',
-            },
+            }
         })
+
     } catch (error) {
         console.error(error)
-        return new NextResponse("ERROR", { status: 400 })
+        return new NextResponse("closed", {
+            headers: {
+                Connection: 'close',
+
+            }
+        })
     }
 }

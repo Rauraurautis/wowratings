@@ -35,7 +35,7 @@ const CharacterList: FC<CharacterListProps> = ({ characterData }) => {
     useEffect(() => {
         const eventSource = new EventSource("/api/subscribecharacters")
 
-        eventSource.addEventListener('update', (e) => {
+        eventSource.addEventListener('message', (e) => {
             console.log("Do refetch now!")
             refetch()
         }
@@ -46,10 +46,10 @@ const CharacterList: FC<CharacterListProps> = ({ characterData }) => {
             console.log("Connection closed")
         })
 
-
         return () => {
             eventSource.close()
         }
+       
     }, [])
 
 
