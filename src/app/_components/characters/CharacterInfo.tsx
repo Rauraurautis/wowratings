@@ -7,6 +7,7 @@ import classColors, { ClassColors } from '../../_lib/utils/classColors'
 import { formatDistance } from 'date-fns'
 import { addOrUpdateCharacter } from '../../_lib/utils/arenaDataFunctions'
 import Spinner from '../random/Spinner'
+import { useQueryClient } from '@tanstack/react-query'
 
 const boxThemes = {
     container: "min-w-[50px] min-h-[50px] md:min-w-[80px] md:min-h-[80px] bg-indigo-500 flex flex-col justify-around items-center",
@@ -17,7 +18,7 @@ const boxThemes = {
 const CharacterInfo: FC<{ character?: FullCharacterData | undefined }> = ({ character }) => {
     const [refreshing, setRefreshing] = useState(false)
     const [currentTime, setCurrentTime] = useState(new Date().getTime())
-    
+    const queryClient = useQueryClient()
 
     if (character) {
         const { twos, threes, rbgs, shuffle, shuffleRank, character: name, realm, charClass, time, image, locale, highestRatings } = character
@@ -26,6 +27,7 @@ const CharacterInfo: FC<{ character?: FullCharacterData | undefined }> = ({ char
             setRefreshing(true)
             setCurrentTime(new Date().getTime())
             const character = await addOrUpdateCharacter(name, realm, locale)
+            queryClient.invalidateQueries({queryKey: ["charData"]})
             setRefreshing(false)
         }
 

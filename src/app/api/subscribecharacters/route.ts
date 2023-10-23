@@ -1,12 +1,14 @@
 import { readFromFile } from '@/app/_lib/utils/serverFunctions'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 import { EventNotifier, getSSEWriter } from 'ts-sse'
 import { z } from 'zod'
 
 const characterArraySchema = z.string()
 
-export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs';
+// This is required to enable streaming
+export const dynamic = 'force-dynamic';
 
 type SyncEvents = EventNotifier<{
     update: {
@@ -25,37 +27,43 @@ type SyncEvents = EventNotifier<{
     }
 }>
 
-export async function GET(req: Request, res: Response) {
 
-    const responseStream = new TransformStream()
-    const writer = responseStream.writable.getWriter()
-    const encoder = new TextEncoder()
-    const syncStatusStream = async (notifier: SyncEvents) => {
-        let characters = readFromFile()
-        setInterval(() => {
-            const characterCheck = readFromFile()
-            if (characterCheck.length > characters.length) {
-                notifier.update(
-                    {
-                        data: "REFETCH!",
-                        event: 'update'
-                    }
-                )
-                characters = characterCheck
-            }
-        }, 1000
-        )
+
+export async function GET(req: NextRequest, res: Response) {
+    try {
+
+
+        const responseStream = new TransformStream()
+        const writer = responseStream.writable.getWriter()
+        const encoder = new TextEncoder()
+     
+            let characters = readFromFile()
+            const interval = setInterval(() => {
+                const realtimeCharacters = readFromFile()
+                if (realtimeCharacters.length > characters.length) {
+                    writer.write("SIGNAL")
+                }
+            }, 1000
+            )
+        
+            req.signal.addEventListener("abort", () => {
+                writer.close()
+                console.log("Closing connection")
+                clearInterval(interval)
+
+            })
+
+
+
+        return new NextResponse(responseStream.readable, {
+            headers: {
+                'Content-Type': 'text/event-stream',
+                Connection: 'keep-alive',
+                'Cache-Control': 'no-cache, no-transform',
+            },
+        })
+    } catch (error) {
+        console.error(error)
+        return new NextResponse("ERROR", { status: 400 })
     }
-
-   
-
-    syncStatusStream(getSSEWriter(writer, encoder))
-
-    return new NextResponse(responseStream.readable, {
-        headers: {
-            'Content-Type': 'text/event-stream',
-            Connection: 'keep-alive',
-            'Cache-Control': 'no-cache, no-transform',
-        },
-    })
 }
