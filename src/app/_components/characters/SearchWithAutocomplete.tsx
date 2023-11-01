@@ -13,6 +13,7 @@ import SpecialCharacters from '../random/SpecialCharacters'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { getAccessToken, setAccessToken } from '@/app/_lib/firebase'
+import instance from '@/app/_lib/axiosInstance'
 
 interface SearchWithAutocompleteProps {
     allCharacters: FullCharacterData[]
@@ -23,21 +24,7 @@ export type CharInfoProps = {
     nameRealmCombo: string
 }
 
-const instance = axios.create({ baseURL: "/api" })
 
-// When searching a character, checks the time the token on db was set. If it's over 24 hours, sets a new token on the db.
-instance.interceptors.request.use(async (req) => {
-    if (req.method === "POST" || req.method === "post") {
-        const { time } = await getAccessToken()
-        const timeNow = new Date().getTime()
-        const timeDifference = timeNow - time
-        if (timeDifference >= 86400000) {
-            await setAccessToken()
-        }
-    }
-
-    return req
-})
 
 const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allCharacters }): React.ReactNode => {
     const queryClient = useQueryClient()
@@ -63,7 +50,7 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
             try {
                 setLoading(true)
                 const [name, realm] = charInfo.nameRealmCombo.split("-")
-                const character = await instance.post("/characters", { name: name.toLowerCase(), realm: realm.toLowerCase(), locale: charInfo.locale })
+                const character = await instance.post("/api/characters", { name: name.toLowerCase(), realm: realm.toLowerCase(), locale: charInfo.locale })
                 if (character) {
                     router.push(`/${character.data.locale}/${character.data.realm}/${character.data.character}`)
                 }
@@ -90,7 +77,6 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
                 <>
 
                     <form onSubmit={handleSubmit} className="flex gap-1 w-full h-[35px]">
-
                         <select className="p-1 rounded-md bg-slate-300 border-slate-600 border-2 hover:border-slate-400 focus:outline-none" name="locale" onChange={e => setCharInfo(prev => ({ ...prev, locale: e.target.value as "eu" | "us" }))}>
                             <option value="eu">EU</option>
                             <option value="us">US</option>
@@ -106,7 +92,7 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
                         <button className="p-1 rounded-md bg-slate-300 border-slate-600 border-2 hover:border-slate-400 focus:outline-none" type="button" onClick={() => setKeyboard(prev => !prev)}>⌨️</button>
                     </form>
                     {suggestions.length > 0 ?
-                        <div className="absolute p-2 top-[35px] h-full w-full ">
+                        <div className="absolute p-2 top-[35px] h-full w-full z-10 ">
                             <div className="bg-slate-400 p-1 rounded-b-md transition-all absolute right-0 left-0">
                                 <ul>
                                     {suggestions.map((suggestion, i) => {

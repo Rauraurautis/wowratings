@@ -62,9 +62,10 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
         let characters = readFromFile()
 
+        // Interval to check if the character list here is shorter than the received characters, or if the first characters don't match, triggering sending a new charlist to client
         const interval = setInterval(() => {
             const characterCheck = readFromFile()
-            if (characterCheck.length > characters.length) {
+            if (characterCheck.length > characters.length || characterCheck[0].id !== characters[0].id) {
                 writer.write(`data: SIGNAL\n\n`)
                 characters = characterCheck
             }

@@ -51,9 +51,11 @@ export const setAccessToken = async () => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         })
+        const access_token = { token: res.data.access_token, time: new Date().getTime() }
         set(reference, {
-            access_token: {token: res.data.access_token, time: new Date().getTime()}
+            access_token
         })
+        return access_token
 
     } catch (error) {
         console.error(error)
