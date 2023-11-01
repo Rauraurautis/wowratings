@@ -30,7 +30,7 @@ const stream = new EventEmitter()
 
 export async function GET(req: NextRequest, res: NextResponse) {
     try {
-
+        
 
         const responseStream = new TransformStream()
         const writer = responseStream.writable.getWriter()

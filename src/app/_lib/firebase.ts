@@ -34,15 +34,15 @@ export const getAccessToken = async () => {
 
 // ---------------------- 
 
-const clientId = process.env.CLIENT_ID;
-const clientSecret = process.env.CLIENT_SECRET;
-
+const clientId = process.env.CLIENT_ID 
+const clientSecret = process.env.CLIENT_SECRET
 const authString = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
 const url = 'https://oauth.battle.net/token';
 const data = 'grant_type=client_credentials';
 
 export const setAccessToken = async () => {
+    if (!clientId) return
     const reference = ref(db, "access_token/")
     try {
         const res = await axios.post(url, data, {

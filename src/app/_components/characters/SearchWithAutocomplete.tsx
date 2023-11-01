@@ -12,6 +12,7 @@ import { toast } from 'react-toastify'
 import SpecialCharacters from '../random/SpecialCharacters'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
+import { setAccessToken } from '@/app/_lib/firebase'
 
 interface SearchWithAutocompleteProps {
     allCharacters: FullCharacterData[]
@@ -22,7 +23,15 @@ export type CharInfoProps = {
     nameRealmCombo: string
 }
 
+const instance = axios.create({ baseURL: "/api" })
 
+instance.interceptors.request.use(async (req) => {
+    if (req.method === "POST" || req.method === "post") {
+        await setAccessToken()
+    }
+
+    return req
+})
 
 const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allCharacters }): React.ReactNode => {
     const queryClient = useQueryClient()
@@ -30,6 +39,9 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [keyboard, setKeyboard] = useState(false)
+
+
+
 
 
     const suggestions = charInfo.nameRealmCombo !== "" ? allCharacters.filter(suggestion =>
@@ -45,7 +57,7 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
             try {
                 setLoading(true)
                 const [name, realm] = charInfo.nameRealmCombo.split("-")
-                const character = await axios.post("/api/characters", { name: name.toLowerCase(), realm: realm.toLowerCase(), locale: charInfo.locale })
+                const character = await instance.post("/characters", { name: name.toLowerCase(), realm: realm.toLowerCase(), locale: charInfo.locale })
                 if (character) {
                     router.push(`/${character.data.locale}/${character.data.realm}/${character.data.character}`)
                 }

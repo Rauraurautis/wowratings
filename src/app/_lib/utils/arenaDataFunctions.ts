@@ -74,6 +74,7 @@ const getArenaExperienceFromAPI = async (character: string, realm: string, local
 const getArenaData = async (character: string, realm: string, locale: string): Promise<FullCharacterData | null> => {
     try {
         const token = await getAccessToken()
+        console.log(token)
         realm = realm.replaceAll(" ", "-")
         const charInfo = await axiosInstance.get(`https://${locale}.api.blizzard.com/profile/wow/character/${realm}/${character}?namespace=profile-${locale}&locale=en_US&access_token=${token}`)
         const { id, character_class, active_spec } = charInfo.data
@@ -88,8 +89,8 @@ const getArenaData = async (character: string, realm: string, locale: string): P
         const image = await getImageFromAPI(character, realm, locale, token)
         const highestRatings = await getArenaExperienceFromAPI(character, realm, locale, token)
         return { id, character, realm, locale, twos, threes, rbgs, shuffle, shuffleRank, charClass, charSpec, time: null, image, highestRatings }
-    } catch (error) {
-        console.error(error)
+    } catch (error: any) {
+        console.error(error.code)
         return null
     }
 }
