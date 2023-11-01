@@ -45,7 +45,7 @@ const getArenaExperienceFromAPI = async (character: string, realm: string, local
     try {
         const highestArena = await axiosInstance.get(characterStatsApiAddress(character, realm, token, locale))
         const achievements = await axiosInstance.get(characterAchievementsApiAddress(character, realm, token, locale))
-       
+
         let category = null
 
         // Finds the pvp category of arenas in statistics (does not exist on all characters, stays null and returns undefined if it doesn't)
@@ -54,8 +54,8 @@ const getArenaExperienceFromAPI = async (character: string, realm: string, local
                 category = cat
                 break
             }
-        }  
-        const pvpStats = category.sub_categories[0].id === 152 ? category.sub_categories[0].statistics : undefined   
+        }
+        const pvpStats = category.sub_categories[0].id === 152 ? category.sub_categories[0].statistics : undefined
 
         const [threes, twos] = pvpStats ? pvpStats.filter((statistics: any) => statistics.id === 595 || statistics.id === 370) : [0, 0]
         const highestRbg = derivePvpAchievements(achievements.data.achievements)
@@ -73,8 +73,7 @@ const getArenaExperienceFromAPI = async (character: string, realm: string, local
 
 const getArenaData = async (character: string, realm: string, locale: string): Promise<FullCharacterData | null> => {
     try {
-        const token = await getAccessToken()
-        console.log(token)
+        const { token } = await getAccessToken()
         realm = realm.replaceAll(" ", "-")
         const charInfo = await axiosInstance.get(`https://${locale}.api.blizzard.com/profile/wow/character/${realm}/${character}?namespace=profile-${locale}&locale=en_US&access_token=${token}`)
         const { id, character_class, active_spec } = charInfo.data

@@ -12,7 +12,7 @@ import { toast } from 'react-toastify'
 import SpecialCharacters from '../random/SpecialCharacters'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { setAccessToken } from '@/app/_lib/firebase'
+import { getAccessToken, setAccessToken } from '@/app/_lib/firebase'
 
 interface SearchWithAutocompleteProps {
     allCharacters: FullCharacterData[]
@@ -25,9 +25,15 @@ export type CharInfoProps = {
 
 const instance = axios.create({ baseURL: "/api" })
 
+// When searching a character, checks the time the token on db was set. If it's over 24 hours, sets a new token on the db.
 instance.interceptors.request.use(async (req) => {
     if (req.method === "POST" || req.method === "post") {
-        await setAccessToken()
+        const { time } = await getAccessToken()
+        const timeNow = new Date().getTime()
+        const timeDifference = timeNow - time
+        if (timeDifference >= 86400000) {
+            await setAccessToken()
+        }
     }
 
     return req

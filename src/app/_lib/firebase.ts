@@ -34,8 +34,8 @@ export const getAccessToken = async () => {
 
 // ---------------------- 
 
-const clientId = process.env.CLIENT_ID 
-const clientSecret = process.env.CLIENT_SECRET
+const clientId = process.env.CLIENT_ID ?? "7a41db7261474c0bab94bcf92e11fbef"
+const clientSecret = process.env.CLIENT_SECRET ?? "RQmxJ565X7R8Tuwl4mY9f294K1G2yUQL"
 const authString = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
 const url = 'https://oauth.battle.net/token';
@@ -52,7 +52,7 @@ export const setAccessToken = async () => {
             }
         })
         set(reference, {
-            access_token: res.data.access_token
+            access_token: {token: res.data.access_token, time: new Date().getTime()}
         })
 
     } catch (error) {
