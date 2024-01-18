@@ -4,8 +4,6 @@ import { formatDistance } from 'date-fns'
 import capitalizeString from '../../_lib/utils/capitalizeString'
 import getHighestRating from '../../_lib/utils/getHighestRating'
 import classColors, { ClassColors } from '../../_lib/utils/classColors'
-import useCharacterStore from '../../_lib/store/characterStore'
-import { readFromFile } from '../../_lib/utils/serverFunctions'
 import { FullCharacterData } from '../../_lib/types'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
@@ -52,7 +50,7 @@ const CharacterList: FC<CharacterListProps> = ({ characterData }) => {
     }, [])
 
 
-    return <div className="w-[80%] flex flex-col items-center justify-center break-keep xl:w-[60%] min-w-[400px] h-full overflow-y">
+    return <div className="mt-10 w-[80%] flex flex-col items-center justify-center break-keep xl:w-[60%] min-w-[400px] h-full overflow-y">
         <h1 className="text-white text-2xl border-b-[1px] border-gray-500 w-[90%] text-center p-1">Most recent searches</h1>
         <table className="w-full border-separate border-spacing-y-2 border-solid">
             <thead>

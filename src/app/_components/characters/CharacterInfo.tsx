@@ -1,7 +1,6 @@
 "use client"
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { FullCharacterData } from '../../_lib/types'
-import useCharacterStore from '../../_lib/store/characterStore'
 import capitalizeString from '../../_lib/utils/capitalizeString'
 import classColors, { ClassColors } from '../../_lib/utils/classColors'
 import { formatDistance } from 'date-fns'
@@ -27,7 +26,7 @@ const CharacterInfo: FC<{ character?: FullCharacterData | undefined }> = ({ char
             setRefreshing(true)
             setCurrentTime(new Date().getTime())
             const character = await addOrUpdateCharacter(name, realm, locale)
-            queryClient.invalidateQueries({queryKey: ["charData"]})
+            queryClient.invalidateQueries({ queryKey: ["charData"] })
             setRefreshing(false)
         }
 

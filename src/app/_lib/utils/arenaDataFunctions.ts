@@ -8,7 +8,7 @@ import { addCharacter } from "./serverFunctions"
 
 
 const specRanking = async (classSpec: string, character: string, token: string): Promise<number> => {
-    const res = await axiosInstance.get(`https://eu.api.blizzard.com/data/wow/pvp-season/35/pvp-leaderboard/shuffle-${classSpec}?namespace=dynamic-eu&access_token=${token}`)
+    const res = await axiosInstance.get(`https://eu.api.blizzard.com/data/wow/pvp-season/36/pvp-leaderboard/shuffle-${classSpec}?namespace=dynamic-eu&access_token=${token}`)
     const data: any[] = res.data.entries
     const characterRank = data.filter((entry) => entry.character.name.toLowerCase() === character)
     return characterRank.length === 0 ? 999999 : characterRank[0].rank
@@ -79,7 +79,7 @@ const getArenaData = async (character: string, realm: string, locale: string): P
         const { id, character_class, active_spec } = charInfo.data
         const charClass = character_class.name.toLowerCase()
         const charSpec = active_spec.name.toLowerCase()
-        const classSpec = `${charClass}-${charSpec}`
+        const classSpec = `${charClass.replace(" ", "")}-${charSpec.replace(" ", "")}`
         const shuffle = await getRatingFromAPI(character, realm, locale, token, `shuffle-${classSpec}`)
         const twos = await getRatingFromAPI(character, realm, locale, token, `2v2`)
         const threes = await getRatingFromAPI(character, realm, locale, token, `3v3`)

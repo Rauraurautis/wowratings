@@ -1,18 +1,12 @@
 "use client"
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { FullCharacterData } from '../../_lib/types'
 import capitalizeString from '../../_lib/utils/capitalizeString'
 import { FormEvent, useState } from 'react'
-import useCharacterStore from '../../_lib/store/characterStore'
-import { addOrUpdateCharacter } from '../../_lib/utils/arenaDataFunctions'
-import Image from 'next/image'
 import Spinner from '../random/Spinner'
 import { characterSearchSchema } from '@/app/_lib/zod/schemas'
 import { toast } from 'react-toastify'
 import SpecialCharacters from '../random/SpecialCharacters'
-import { useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-import { getAccessToken, setAccessToken } from '@/app/_lib/firebase'
 import instance from '@/app/_lib/axiosInstance'
 
 interface SearchWithAutocompleteProps {
@@ -27,7 +21,6 @@ export type CharInfoProps = {
 
 
 const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allCharacters }): React.ReactNode => {
-    const queryClient = useQueryClient()
     const [charInfo, setCharInfo] = useState<CharInfoProps>({ nameRealmCombo: "", locale: "eu" })
     const router = useRouter()
     const [loading, setLoading] = useState(false)
@@ -107,7 +100,7 @@ const SearchWithAutocomplete: React.FC<SearchWithAutocompleteProps> = ({ allChar
                         : ""}
                 </>
             }
-            {keyboard ? <div className="w-[300px] h-[300px] p-2 flex flex-wrap justify-center gap-2 absolute mt-10 xl:mt-0 xl:bottom-0 z-40">
+            {keyboard ? <div className="w-[300px] h-[300px] p-2 flex flex-wrap justify-center gap-2 absolute top-10 xl:mt-0 xl:bottom-0 z-40">
                 <SpecialCharacters setCharInfo={setCharInfo} />
             </div> : ""}
 
